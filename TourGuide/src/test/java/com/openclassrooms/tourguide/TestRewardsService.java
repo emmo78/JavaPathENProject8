@@ -1,5 +1,6 @@
 package com.openclassrooms.tourguide;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -31,12 +32,13 @@ public class TestRewardsService {
 		TourGuideService tourGuideService = new TourGuideService(gpsUtil, rewardsService);
 
 		User user = new User(UUID.randomUUID(), "jon", "000", "jon@tourGuide.com");
-		Attraction attraction = gpsUtil.getAttractions().get(0);
-		user.addToVisitedLocations(new VisitedLocation(user.getUserId(), attraction, new Date()));
+		List<Attraction> attractions = gpsUtil.getAttractions();
+		user.addToVisitedLocations(new VisitedLocation(user.getUserId(), attractions.get(0), new Date()));
+		user.addToVisitedLocations(new VisitedLocation(user.getUserId(), attractions.get(1), new Date()));
 		tourGuideService.trackUserLocation(user);
 		List<UserReward> userRewards = user.getUserRewards();
 		tourGuideService.tracker.stopTracking();
-		assertTrue(userRewards.size() == 1);
+		assertThat(userRewards).hasSize(2);
 	}
 
 	@Test
